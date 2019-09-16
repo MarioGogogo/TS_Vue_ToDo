@@ -11,6 +11,7 @@
         @on-save="handleSave"
         @on-edit="handleEdit"
         @on-close="handleClose"
+        @on-setComplete="handleSetComplete"
       ></todo-item>
     </ul>
   </div>
@@ -31,11 +32,11 @@ export default class TodoPage extends Vue {
   public list = [
     {
       text: "吃饭",
-      complete: true
+      complete: false
     },
     {
       text: "睡觉",
-      complete: true
+      complete: false
     },
     {
       text: "打豆豆",
@@ -46,13 +47,16 @@ export default class TodoPage extends Vue {
   handleSave({ index, content }) {
     console.log(index, content);
     this.list[index].text = content;
-    this.isEditIndex = -1;
+    this.handleClose();
   }
   handleEdit({ index }) {
     this.isEditIndex = index;
   }
-  handleClose({ index }) {
+  handleClose() {
     this.isEditIndex = -1;
+  }
+  handleSetComplete({ index }) {
+    this.list[index].complete = true;
   }
 }
 </script>

@@ -1,6 +1,6 @@
 import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
 import { Divider } from 'ant-design-vue';
-
+import '../css/item.less';
 // 定义接口
 interface Item {
   text: string;
@@ -45,9 +45,16 @@ export default class TodoItem extends Vue {
     });
   }
 
+  public setComplete() {
+    // 告诉父组件完成的是第几条
+    this.$emit('on-setComplete', {
+      index: this.index,
+    });
+  }
+
   protected render() {
     return (
-      <li>
+      <li class='item-wrap' on-click={this.setComplete}>
         {this.isEditIndex === this.index ? (
           <div>
             <a-input v-model={this.editContent} />
@@ -56,7 +63,7 @@ export default class TodoItem extends Vue {
           </div>
         ) : (
           <div>
-            <span>{this.item.text}</span>
+            <span style={this.item.complete ? { textDecoration: 'line-through' } : null}>{this.item.text}</span>
             <a-icon type='edit' nativeOn-click={this.edit} />
           </div>
         )}
