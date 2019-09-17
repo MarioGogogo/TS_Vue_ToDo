@@ -1,4 +1,4 @@
-import { Component, Prop, Watch, Vue } from 'vue-property-decorator';
+import { Component, Prop, Watch, Emit, Vue } from 'vue-property-decorator';
 import { Divider } from 'ant-design-vue';
 import '../css/item.less';
 // 定义接口
@@ -26,14 +26,19 @@ export default class TodoItem extends Vue {
     }
   }
 
-  public save() {
-    this.$emit('on-save', {
+  @Emit('on-save')
+  public save(event) {
+    // 如果前面又事件函数 则在 最后一个参数接受 比如 get(index,state,event)
+    event.stopPropagation();
+    console.log('event', event);
+    return {
       index: this.index,
       content: this.editContent,
-    });
+    };
   }
 
-  public edit() {
+  public edit(event) {
+    event.stopPropagation(); // 阻止冒泡
     this.$emit('on-edit', {
       index: this.index,
     });
@@ -54,7 +59,7 @@ export default class TodoItem extends Vue {
 
   protected render() {
     return (
-      <li class='item-wrap' on-click={this.setComplete}>
+      <li class='item-wrap'>
         {this.isEditIndex === this.index ? (
           <div>
             <a-input v-model={this.editContent} />
@@ -63,7 +68,9 @@ export default class TodoItem extends Vue {
           </div>
         ) : (
           <div>
-            <span style={this.item.complete ? { textDecoration: 'line-through' } : null}>{this.item.text}</span>
+            <span on-click={this.setComplete} style={this.item.complete ? { textDecoration: 'line-through' } : null}>
+              {this.item.text}
+            </span>
             <a-icon type='edit' nativeOn-click={this.edit} />
           </div>
         )}

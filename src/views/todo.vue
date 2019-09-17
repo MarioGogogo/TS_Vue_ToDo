@@ -4,7 +4,7 @@
       <todo-item
         v-for="(item,index) 
       in list"
-        v-bind="index"
+        :key="`todo-item-${index}`"
         :item="item"
         :index="index"
         :isEditIndex="isEditIndex"
@@ -20,6 +20,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import TodoItem from "../components/todo-item";
+import { State, Mutation } from "vuex-class";
 
 @Component({
   name: "TodoPage",
@@ -28,35 +29,29 @@ import TodoItem from "../components/todo-item";
   }
 })
 export default class TodoPage extends Vue {
+  @State("todoList") public list;
   public isEditIndex = -1;
-  public list = [
-    {
-      text: "吃饭",
-      complete: false
-    },
-    {
-      text: "睡觉",
-      complete: false
-    },
-    {
-      text: "打豆豆",
-      complete: false
-    }
-  ];
 
+  @Mutation("updateTodoList") public updateList;
   handleSave({ index, content }) {
     console.log(index, content);
-    this.list[index].text = content;
+    this.updateList({ index, content });
     this.handleClose();
   }
   handleEdit({ index }) {
-    this.isEditIndex = index;
+    if (this.list[index].complete) {
+      alert("已删除状态无法打开");
+    } else {
+      this.isEditIndex = index;
+    }
   }
   handleClose() {
     this.isEditIndex = -1;
   }
+
+  @Mutation("setTodoComplete") public setTodoComplete;
   handleSetComplete({ index }) {
-    this.list[index].complete = true;
+    this.setTodoComplete({ index });
   }
 }
 </script>
